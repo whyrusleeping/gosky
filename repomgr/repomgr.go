@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/ipfs/go-cid"
+	logging "github.com/ipfs/go-log/v2"
 	cbg "github.com/whyrusleeping/cbor-gen"
 	atproto "github.com/whyrusleeping/gosky/api/atproto"
 	apibsky "github.com/whyrusleeping/gosky/api/bsky"
@@ -18,6 +19,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
+
+var log = logging.Logger("repomgr")
 
 func NewRepoManager(db *gorm.DB, cs *carstore.CarStore) *RepoManager {
 	db.AutoMigrate(RepoHead{})
@@ -493,7 +496,7 @@ func (rm *RepoManager) HandleExternalUserEvent(ctx context.Context, pdsid uint, 
 		return fmt.Errorf("opening external user repo: %w", err)
 	}
 
-	fmt.Println("external event: ", ops)
+	log.Infow("external event", "uid", uid, "ops", ops)
 
 	var evtops []RepoOp
 	for _, op := range ops {
